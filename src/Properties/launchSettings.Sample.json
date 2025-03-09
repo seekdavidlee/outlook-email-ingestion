@@ -1,0 +1,13 @@
+{
+	"profiles": {
+		"EmailIngestion": {
+			"commandName": "Project",
+			"environmentVariables": {
+				"EmailUsername": "",
+				"ClientId": "",
+				"BaseUri": "",
+				"FileSystemApi": ""
+			}
+		}
+	}
+}
