@@ -8,17 +8,22 @@ public class Processor(HttpClient fileSystemClient, GraphServiceClient client, C
 {
     public async Task ProcessMessagesAsync()
     {
+        var intervalBetweenChecksInSecondsStr = Environment.GetEnvironmentVariable("IntervalBetweenChecksInSeconds");
+        int intervalBetweenChecksInSeconds = intervalBetweenChecksInSecondsStr is not null && int.TryParse(intervalBetweenChecksInSecondsStr, out var interval) ? interval : 3;
+
+        Console.WriteLine($"Interval between checks: {intervalBetweenChecksInSeconds} seconds");
         while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
+                Console.WriteLine($"{DateTime.UtcNow} - checking for new emails...");
                 var res = await client.Me.Messages.GetAsync(cancellationToken: cancellationToken);
                 if (res is not null)
                 {
                     await ProcessResponseAsync(res);
                 }
 
-                await Task.Delay(3000);
+                await Task.Delay(TimeSpan.FromSeconds(intervalBetweenChecksInSeconds));
             }
             catch (Exception e)
             {
@@ -30,8 +35,9 @@ public class Processor(HttpClient fileSystemClient, GraphServiceClient client, C
 
     private async Task ProcessResponseAsync(MessageCollectionResponse response)
     {
-        if (response.Value is null)
+        if (response.Value is null || response.Value.Count == 0)
         {
+            Console.WriteLine($"{DateTime.UtcNow} - no emails found in this interval");
             return;
         }
 

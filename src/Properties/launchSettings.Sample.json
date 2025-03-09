@@ -6,7 +6,8 @@
 				"EmailUsername": "",
 				"ClientId": "",
 				"BaseUri": "",
-				"FileSystemApi": ""
+				"FileSystemApi": "",
+				"IntervalBetweenChecksInSeconds": "30"
 			}
 		}
 	}
